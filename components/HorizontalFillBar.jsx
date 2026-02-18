@@ -6,6 +6,7 @@ export default function HorizontalFillBar({
   style,
   fillStyle,
   trackStyle,
+    color = "#40a5e6"
 }) {
   const clampedFill = Math.max(0, Math.min(100, Number(fill) || 0));
 
