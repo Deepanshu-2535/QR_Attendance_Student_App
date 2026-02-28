@@ -52,10 +52,10 @@ const tabsLayout = () => {
             }
         }}>
             <Tabs.Screen name="index" options={{
-                title: "Home",
+                title: "Index",
                 headerShown: false,
                 tabBarIcon: ({ focused }) => (
-                    <TabIcon focused={focused} text="Home" icon={<House size={25} />} highlighted={<House size={25} color={colors.primary} />} />
+                    <TabIcon focused={focused} text="Index" icon={<House size={25} />} highlighted={<House size={25} color={colors.primary} />} />
                 )
             }}/>
             <Tabs.Screen name="scan" options={{

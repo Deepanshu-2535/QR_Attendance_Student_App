@@ -9,6 +9,9 @@ import Divider from "../../components/Divider";
 
 const Profile = () => {
     const router  = useRouter();
+    const handleLogout = () => {
+        router.replace("/")
+    }
     return (
         <SafeAreaView>
             <View className="items-center">
@@ -57,7 +60,7 @@ const Profile = () => {
                     </View>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={{backgroundColor:colors.danger,marginHorizontal:20,height:50}} className="items-center justify-center rounded-2xl my-5">
+            <TouchableOpacity onPress={handleLogout} style={{backgroundColor:colors.danger,marginHorizontal:20,height:50}} className="items-center justify-center rounded-2xl my-5">
                 <Text className="text-surface font-semibold text-xl">Logout</Text>
             </TouchableOpacity>
         </SafeAreaView>
