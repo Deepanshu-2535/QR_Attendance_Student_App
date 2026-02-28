@@ -1,4 +1,5 @@
 import {View, StyleSheet} from "react-native";
+import {colors} from "../constants/colors";
 
 export default function HorizontalFillBar({
   fill = 0,
@@ -6,13 +7,20 @@ export default function HorizontalFillBar({
   style,
   fillStyle,
   trackStyle,
-    color = "#40a5e6"
+  color = colors.primary,
+  trackColor = colors.border,
 }) {
   const clampedFill = Math.max(0, Math.min(100, Number(fill) || 0));
 
   return (
-    <View style={[styles.track, {height}, trackStyle, style]}>
-      <View style={[styles.fill, {width: `${clampedFill}%`}, fillStyle]} />
+    <View style={[styles.track, {height, backgroundColor: trackColor}, trackStyle, style]}>
+      <View
+        style={[
+          styles.fill,
+          {width: `${clampedFill}%`, backgroundColor: color},
+          fillStyle,
+        ]}
+      />
     </View>
   );
 }
@@ -20,13 +28,11 @@ export default function HorizontalFillBar({
 const styles = StyleSheet.create({
   track: {
     width: "100%",
-    backgroundColor: "#e5e7eb",
     borderRadius: 9999,
     overflow: "hidden",
   },
   fill: {
     height: "100%",
-    backgroundColor: "#40a5e6",
     borderRadius: 9999,
   },
 });

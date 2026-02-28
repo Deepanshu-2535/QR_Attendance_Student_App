@@ -1,49 +1,52 @@
-import {StyleSheet, Text, View} from 'react-native'
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import React, {useState} from 'react'
 import HorizontalFillBar from "./HorizontalFillBar";
 import {ChevronRight} from "lucide-react-native";
+import {useRouter} from "expo-router";
+import {colors} from "../constants/colors";
 
-const SubjectContainer = ({subjectName,totalClasses,attended}) => {
+const SubjectContainer = ({subjectId,subjectName,totalClasses,attended}) => {
     const [totalAttendance,setTotalAttendance] = useState(Math.round((attended/totalClasses)*100));
+    const router = useRouter();
     let fillColor;
     if(totalAttendance>75){
-        fillColor = "#22C55E"
+        fillColor = colors.success
     }
     else if(totalAttendance<25){
-        fillColor = "#F56260"
+        fillColor = colors.danger
     }
     else{
-        fillColor = "#40a5e6"
+        fillColor = colors.primary
     }
 
     return (
-        <View style = {styles.container}>
+        <TouchableOpacity onPress={()=>router.push(`/details/${subjectId}`)} style = {styles.container}>
             <View className="flex-row">
                 <View className="flex-1 justify-center">
                     <Text className="text-2xl font-bold">{subjectName}</Text>
-                    <Text className="text-gray-500 font-semibold">Attendance: {attended} / {totalClasses}</Text>
+                    <Text className="text-muted font-semibold">Attendance: {attended} / {totalClasses}</Text>
                 </View>
                 <View className="flex-1 justify-center">
                     <Text className="text-right text-4xl font-bold">{totalAttendance}%</Text>
                 </View>
                 <View className="justify-center ml-2">
-                    <ChevronRight color="#a6a6a6" />
+                    <ChevronRight color={colors.muted} />
                 </View>
             </View>
             <View className="mt-5">
                 <HorizontalFillBar fill={totalAttendance} fillStyle={{backgroundColor:fillColor}}/>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 export default SubjectContainer
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "white",
+        backgroundColor: colors.surface,
         borderRadius : 20,
         marginHorizontal : 20,
         marginVertical : 10,
-        shadowColor : "gray",
+        shadowColor : colors.muted,
         shadowRadius : 8,
         shadowOpacity : 0.2,
         padding : 20

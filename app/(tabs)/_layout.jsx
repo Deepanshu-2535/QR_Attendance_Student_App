@@ -4,20 +4,21 @@ import {Tabs} from "expo-router";
 import {Image, ImageBackground} from "react-native";
 import {ChartPie, History, House, ScanQrCode, UserRound} from "lucide-react-native"
 import home from "../../assets/images/home.png"
+import {colors} from "../../constants/colors";
 
 const TabIcon = ({focused,icon,highlighted,text}) =>{
     if(focused){
         return(
-            <ImageBackground className="flex w-full h-full justify-center items-center bg-gray-100 rounded-full ">
+            <ImageBackground className="flex w-full h-full justify-center items-center bg-background rounded-full ">
                 {highlighted}
-                <Text className="text-[#1226ba] text-sm">{text}</Text>
+                <Text className="text-primary text-sm">{text}</Text>
             </ImageBackground>
         )
     }
     return(
         <ImageBackground className="flex-1 justify-center items-center">
             {icon}
-            <Text className="text-gray-500 text-sm">{text}</Text>
+            <Text className="text-muted text-sm">{text}</Text>
         </ImageBackground>
     )
 }
@@ -41,7 +42,7 @@ const tabsLayout = () => {
             tabBarStyle:{
                 paddingBottom:0,
                 position:'absolute',
-                shadowColor: 'black',
+                shadowColor: colors.text,
                 shadowRadius : 7,
                 shadowOpacity: 0.1,
                 borderRadius : 50,
@@ -54,21 +55,21 @@ const tabsLayout = () => {
                 title: "Home",
                 headerShown: false,
                 tabBarIcon: ({ focused }) => (
-                    <TabIcon focused={focused} text="Home" icon={<House size={25} />} highlighted={<House size={25} color="#1226ba" />} />
+                    <TabIcon focused={focused} text="Home" icon={<House size={25} />} highlighted={<House size={25} color={colors.primary} />} />
                 )
             }}/>
             <Tabs.Screen name="scan" options={{
                 title: "Scan" ,
                 headerShown: false,
                 tabBarIcon: ({ focused }) => (
-                    <TabIcon focused={focused} text="Scan" icon={<ScanQrCode size={25} />} highlighted={<ScanQrCode size={25} color="#1226ba" />} />
+                    <TabIcon focused={focused} text="Scan" icon={<ScanQrCode size={25} />} highlighted={<ScanQrCode size={25} color={colors.primary} />} />
                 )
             }}/>
             <Tabs.Screen name="profile" options={{
                 title: "Profile",
                 headerShown: false,
                 tabBarIcon: ({ focused }) => (
-                    <TabIcon focused={focused} text="Profile" icon={<UserRound size={25}/>} highlighted={<UserRound size={25} color="#1226ba" />} />
+                    <TabIcon focused={focused} text="Profile" icon={<UserRound size={25}/>} highlighted={<UserRound size={25} color={colors.primary} />} />
                 )
             }}/>
         </Tabs>
