@@ -2,8 +2,78 @@ export const student = {
     rollNo: 2311113,
     firstName: "Arya",
     lastName: "Jain",
-    semester: 6
+    semester: 6,
+    department:"School of Computer Science"
 }
+
+export const teacher = {
+    teacherId: "T-1042",
+    title:"Dr.",
+    firstName: "Ananya",
+    lastName: "Verma",
+    designation: "Assistant Professor",
+    department:"School of Computer Science"
+}
+
+export const teacherInfoPanelData = {
+    noOfSubjects : 5,
+    totalStudents : 120,
+    averageAttendance : 75
+}
+
+export const teacherSubjectData = [
+    {
+        subjectId: "CS301",
+        subjectName: "DBMS",
+        sessionDate: "April 24, 2024",
+        present: 38,
+        absent: 10
+    },
+    {
+        subjectId: "CS302",
+        subjectName: "Algorithms",
+        sessionDate: "April 23, 2024",
+        present: 42,
+        absent: 5
+    },
+    {
+        subjectId: "CS303",
+        subjectName: "Computer Networks",
+        sessionDate: "April 22, 2024",
+        present: 40,
+        absent: 13
+    }
+]
+
+export const teacherSubjects = [
+    {
+        subjectId: "CS301",
+        subjectName: "DBMS"
+    },
+    {
+        subjectId: "CS302",
+        subjectName: "OOPS"
+    },
+    {
+        subjectId: "CS303",
+        subjectName: "DSA"
+    }
+]
+
+export const teacherQrTokens = [
+    {
+        subjectId: "CS301",
+        qrJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.CS301.DUMMY_SIGNATURE"
+    },
+    {
+        subjectId: "CS302",
+        qrJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.CS302.DUMMY_SIGNATURE"
+    },
+    {
+        subjectId: "CS303",
+        qrJwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.CS303.DUMMY_SIGNATURE"
+    }
+]
 
 export const subjectAttendance = [
     {

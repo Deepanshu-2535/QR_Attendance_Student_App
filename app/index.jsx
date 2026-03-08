@@ -12,7 +12,7 @@ const Index = () => {
         router.replace("/Student")
     }
     else if (role === "teacher"){
-        //router.replace("/Teacher")
+        router.replace("/Teacher")
     }
   }
 

@@ -3,7 +3,7 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import {student,subjectAttendance} from "../../mocks/mockdata.js"
 import HorizontalFillBar from "../../components/HorizontalFillBar";
 import {History} from "lucide-react-native";
-import SubjectContainer from "../../components/SubjectContainer";
+import StudentSubjectContainer from "../../components/StudentSubjectContainer";
 import Divider from "../../components/Divider";
 import {colors} from "../../constants/colors";
 export default function Index() {
@@ -56,7 +56,7 @@ export default function Index() {
             </View>
           </View>
           <Text className="text-xl font-semibold text-muted mx-8">Subjects</Text>
-          {subjectAttendance.map((subject,index)=> <SubjectContainer key={subject.subjectId} subjectId={subject.subjectId} subjectName={subject.subjectName} totalClasses={subject.totalClasses} attended={subject.attended}/>)}
+          {subjectAttendance.map((subject,index)=> <StudentSubjectContainer key={subject.subjectId} subjectId={subject.subjectId} subjectName={subject.subjectName} totalClasses={subject.totalClasses} attended={subject.attended}/>)}
           <View style={{height:80}}></View>
         </ScrollView>
       </SafeAreaView>

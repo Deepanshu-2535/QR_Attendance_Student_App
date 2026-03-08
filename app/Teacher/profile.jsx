@@ -1,9 +1,9 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import React from 'react'
 import {SafeAreaView} from "react-native-safe-area-context";
-import {student} from "../../mocks/mockdata";
+import {teacher} from "../../mocks/mockdata";
 import {ChevronRight, Info, LockKeyhole, UserRoundPen} from "lucide-react-native";
-import {useNavigation, useRouter} from "expo-router";
+import {useRouter} from "expo-router";
 import {colors} from "../../constants/colors";
 import Divider from "../../components/Divider";
 
@@ -18,23 +18,23 @@ const Profile = () => {
                 <View className="mt-10 bg-muted/20 h-28 w-28 rounded-full items-center justify-center">
                     <UserRoundPen color={colors.muted} size={40}/>
                 </View>
-                <Text className="mx-8 mb-3 mt-5 text-4xl font-bold">{student.firstName + " "+ student.lastName}</Text>
+                <Text className="mx-8 mb-3 mt-5 text-4xl font-bold">{teacher.firstName + " "+ teacher.lastName}</Text>
             </View>
             <View style={styles.container}>
                 <View>
                     <Text className="text-xl font-semibold text-muted">Department</Text>
-                    <Text className="text-muted">{student.department}</Text>
+                    <Text className="text-muted">{teacher.department}</Text>
                 </View>
                 <Divider margin={10}/>
                 <View className="flex-row justify-between">
-                    <View className="flex-1 flex-row items-center justify-between">
-                        <Text className="font-semibold text-muted">Semester</Text>
-                        <Text className="text-muted">{student.semester}</Text>
+                    <View className="flex-1 justify-between">
+                        <Text className="font-semibold text-muted">Designation</Text>
+                        <Text className="text-muted">{teacher.designation}</Text>
                     </View>
                     <Divider orientation="vertical" margin={10}/>
                     <View className="flex-1 flex-row items-center justify-between">
-                        <Text className="font-semibold text-muted">Roll.no</Text>
-                        <Text className="text-muted">{student.rollNo}</Text>
+                        <Text className="font-semibold text-muted">Teacher ID</Text>
+                        <Text className="text-muted">{teacher.teacherId}</Text>
                     </View>
                 </View>
             </View>
@@ -79,3 +79,4 @@ const styles = StyleSheet.create({
         padding : 20
     }
 })
+
