@@ -1,18 +1,17 @@
-import {ScrollView, Text, TextInput, View, StyleSheet, TouchableOpacity} from "react-native";
-import React, {useState} from "react";
-import {colors, withOpacity} from "../constants/colors";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {useRouter} from "expo-router";
+import { ScrollView, Text, TextInput, View, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
+import { colors, withOpacity } from '../constants/colors'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useRouter } from 'expo-router'
 
 const Index = () => {
-  const [role, setRole] = useState("student");
-  const router = useRouter();
-  function handleLogin(){
-    if(role === "student"){
-        router.replace("/Student")
-    }
-    else if (role === "teacher"){
-        router.replace("/Teacher")
+  const [role, setRole] = useState('studentDetails')
+  const router = useRouter()
+  function handleLogin() {
+    if (role === 'studentDetails') {
+      router.replace('/Student')
+    } else if (role === 'teacherDetails') {
+      router.replace('/Teacher')
     }
   }
 
@@ -24,7 +23,7 @@ const Index = () => {
       <SafeAreaView className="flex-1">
         <ScrollView
           className="flex-1 min-w-full"
-          contentContainerStyle={{flexGrow: 1}}
+          contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.appHeader}>
@@ -34,85 +33,73 @@ const Index = () => {
             <Text style={styles.appName}>App Name</Text>
           </View>
 
-        <Text className="mx-8 mb-3 mt-6 text-4xl font-bold">Welcome Back</Text>
-        <Text className="mx-8 text-xl text-muted">
-          Sign in with your college email ID to continue.
-        </Text>
-
-        <View style={styles.card}>
-          <Text className="text-2xl font-semibold mb-1">Sign In</Text>
-          <Text className="text-muted mb-4">
-            Choose your role and enter your credentials.
+          <Text className="mx-8 mb-3 mt-6 text-4xl font-bold">Welcome Back</Text>
+          <Text className="mx-8 text-xl text-muted">
+            Sign in with your college email ID to continue.
           </Text>
-          <View style={styles.roleSwitch}>
-            <TouchableOpacity
-              style={[styles.roleOption, role === "student" && styles.roleOptionActive]}
-              onPress={() => setRole("student")}
-            >
-              <Text
-                style={[
-                  styles.roleText,
-                  role === "student" && styles.roleTextActive,
-                ]}
+
+          <View style={styles.card}>
+            <Text className="text-2xl font-semibold mb-1">Sign In</Text>
+            <Text className="text-muted mb-4">Choose your role and enter your credentials.</Text>
+            <View style={styles.roleSwitch}>
+              <TouchableOpacity
+                style={[styles.roleOption, role === 'studentDetails' && styles.roleOptionActive]}
+                onPress={() => setRole('studentDetails')}
               >
-                Student
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.roleOption, role === "teacher" && styles.roleOptionActive]}
-              onPress={() => setRole("teacher")}
-            >
-              <Text
-                style={[
-                  styles.roleText,
-                  role === "teacher" && styles.roleTextActive,
-                ]}
+                <Text style={[styles.roleText, role === 'studentDetails' && styles.roleTextActive]}>
+                  Student
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.roleOption, role === 'teacherDetails' && styles.roleOptionActive]}
+                onPress={() => setRole('teacherDetails')}
               >
-                Teacher
+                <Text style={[styles.roleText, role === 'teacherDetails' && styles.roleTextActive]}>
+                  Teacher
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text className="text-muted font-semibold mt-6 mb-2">College Email</Text>
+            <TextInput
+              placeholder="name@college.edu"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              className="bg-background rounded-xl px-4 py-3 text-base text-text"
+            />
+
+            <Text className="text-muted font-semibold mt-4 mb-2">Password</Text>
+            <TextInput
+              placeholder="Enter your password"
+              secureTextEntry
+              className="bg-background rounded-xl px-4 py-3 text-base text-text"
+            />
+
+            <Text className="text-muted mt-4">
+              You are signing in as{' '}
+              <Text className="font-semibold text-text">
+                {role === 'studentDetails' ? 'Student' : 'Teacher'}
               </Text>
-            </TouchableOpacity>
+              .
+            </Text>
           </View>
 
-          <Text className="text-muted font-semibold mt-6 mb-2">College Email</Text>
-          <TextInput
-            placeholder="name@college.edu"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-            className="bg-background rounded-xl px-4 py-3 text-base text-text"
-          />
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text className="text-surface font-semibold text-xl">Log In</Text>
+          </TouchableOpacity>
 
-          <Text className="text-muted font-semibold mt-4 mb-2">Password</Text>
-          <TextInput
-            placeholder="Enter your password"
-            secureTextEntry
-            className="bg-background rounded-xl px-4 py-3 text-base text-text"
-          />
-
-          <Text className="text-muted mt-4">
-            You are signing in as{" "}
-            <Text className="font-semibold text-text">
-              {role === "student" ? "Student" : "Teacher"}
-            </Text>
-            .
+          <Text className="mx-8 mt-4 text-muted">
+            Need help? Contact your department or campus admin.
           </Text>
-        </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text className="text-surface font-semibold text-xl">Log In</Text>
-        </TouchableOpacity>
-
-        <Text className="mx-8 mt-4 text-muted">
-          Need help? Contact your department or campus admin.
-        </Text>
-          <View style={{height: 120}} />
+          <View style={{ height: 120 }} />
         </ScrollView>
       </SafeAreaView>
     </View>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index
 
 const styles = StyleSheet.create({
   page: {
@@ -120,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   pageAccentTop: {
-    position: "absolute",
+    position: 'absolute',
     top: -120,
     right: -60,
     width: 320,
@@ -129,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: withOpacity(colors.primary, 0.1),
   },
   pageAccentBottom: {
-    position: "absolute",
+    position: 'absolute',
     bottom: -160,
     left: -80,
     width: 360,
@@ -138,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: withOpacity(colors.primary, 0.08),
   },
   pageAccentSide: {
-    position: "absolute",
+    position: 'absolute',
     top: 220,
     left: -120,
     width: 240,
@@ -149,8 +136,8 @@ const styles = StyleSheet.create({
   appHeader: {
     marginHorizontal: 20,
     marginTop: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   appIconPlaceholder: {
@@ -160,20 +147,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: withOpacity(colors.primary, 0.25),
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: colors.muted,
     shadowRadius: 10,
     shadowOpacity: 0.2,
   },
   appIconText: {
     color: colors.primary,
-    fontWeight: "700",
+    fontWeight: '700',
     letterSpacing: 0.6,
   },
   appName: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text,
   },
   card: {
@@ -187,7 +174,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   roleSwitch: {
-    flexDirection: "row",
+    flexDirection: 'row',
     backgroundColor: colors.background,
     borderRadius: 16,
     padding: 6,
@@ -196,7 +183,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     paddingVertical: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
   roleOptionActive: {
     backgroundColor: colors.surface,
@@ -207,7 +194,7 @@ const styles = StyleSheet.create({
   roleText: {
     color: colors.muted,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   roleTextActive: {
     color: colors.text,
@@ -218,7 +205,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 50,
     borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-});
+})

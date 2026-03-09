@@ -4,17 +4,18 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text, TouchableOpacity,
+  Text,
+  TouchableOpacity,
   View,
-} from "react-native";
-import React, {useMemo, useState} from "react";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {ChevronDown} from "lucide-react-native";
-import QRCode from "react-native-qrcode-svg";
-import {Picker} from "@react-native-picker/picker";
-import {teacher, teacherQrTokens, teacherSubjects} from "../../mocks/mockdata";
-import {colors, withOpacity} from "../../constants/colors";
-import Divider from "../../components/Divider";
+} from 'react-native'
+import React, { useMemo, useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { ChevronDown } from 'lucide-react-native'
+import QRCode from 'react-native-qrcode-svg'
+import { Picker } from '@react-native-picker/picker'
+import { teacherDetails, teacherQrTokens, teacherSubjects } from '../../mocks/mockdata'
+import { colors, withOpacity } from '../../constants/colors'
+import Divider from '../../components/Divider'
 
 const Qrcode = () => {
   const subjects = useMemo(
@@ -23,43 +24,39 @@ const Qrcode = () => {
         id: subject.subjectId,
         name: subject.subjectName,
       })),
-    []
-  );
+    [],
+  )
 
-  const [selectedId, setSelectedId] = useState(subjects[0]?.id ?? "");
-  const [showQr, setShowQr] = useState(false);
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const [tempSelectedId, setTempSelectedId] = useState(
-    subjects[0]?.id ?? ""
-  );
+  const [selectedId, setSelectedId] = useState(subjects[0]?.id ?? '')
+  const [showQr, setShowQr] = useState(false)
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [tempSelectedId, setTempSelectedId] = useState(subjects[0]?.id ?? '')
   const selectedSubject = useMemo(
     () => subjects.find((subject) => subject.id === selectedId),
-    [subjects, selectedId]
-  );
+    [subjects, selectedId],
+  )
 
   const qrToken = useMemo(() => {
-    if (!selectedSubject) return "";
-    const tokenEntry = teacherQrTokens.find(
-      (entry) => entry.subjectId === selectedSubject.id
-    );
-    return tokenEntry?.qrJwt ?? "";
-  }, [selectedSubject]);
+    if (!selectedSubject) return ''
+    const tokenEntry = teacherQrTokens.find((entry) => entry.subjectId === selectedSubject.id)
+    return tokenEntry?.qrJwt ?? ''
+  }, [selectedSubject])
 
   const openSubjectPicker = () => {
-    if (subjects.length === 0) return;
-    setTempSelectedId(selectedId || subjects[0]?.id || "");
-    setPickerOpen(true);
-  };
+    if (subjects.length === 0) return
+    setTempSelectedId(selectedId || subjects[0]?.id || '')
+    setPickerOpen(true)
+  }
 
   const closeSubjectPicker = () => {
-    setPickerOpen(false);
-  };
+    setPickerOpen(false)
+  }
 
   const confirmSubjectPicker = () => {
-    setSelectedId(tempSelectedId);
-    setShowQr(false);
-    setPickerOpen(false);
-  };
+    setSelectedId(tempSelectedId)
+    setShowQr(false)
+    setPickerOpen(false)
+  }
 
   return (
     <SafeAreaView className="flex-1">
@@ -71,19 +68,16 @@ const Qrcode = () => {
 
         <View style={styles.card}>
           <Text className="text-xl font-semibold text-muted">Subject</Text>
-          {Platform.OS === "ios" ? (
+          {Platform.OS === 'ios' ? (
             <Pressable
               onPress={openSubjectPicker}
               disabled={subjects.length === 0}
-              style={[
-                styles.dropdown,
-                subjects.length === 0 && styles.dropdownDisabled,
-              ]}
+              style={[styles.dropdown, subjects.length === 0 && styles.dropdownDisabled]}
             >
               <Text className="text-muted text-base">
                 {selectedSubject
                   ? `${selectedSubject.name} (${selectedSubject.id})`
-                  : "Select subject"}
+                  : 'Select subject'}
               </Text>
               <ChevronDown size={18} color={colors.muted} />
             </Pressable>
@@ -91,19 +85,15 @@ const Qrcode = () => {
             <View style={styles.pickerWrapper}>
               <Picker
                 selectedValue={selectedId}
-              onValueChange={(value) => {
-                setSelectedId(value);
-                setShowQr(false);
-              }}
+                onValueChange={(value) => {
+                  setSelectedId(value)
+                  setShowQr(false)
+                }}
                 style={styles.picker}
                 dropdownIconColor={colors.muted}
               >
                 {subjects.length === 0 && (
-                  <Picker.Item
-                    label="No subjects available"
-                    value=""
-                    enabled={false}
-                  />
+                  <Picker.Item label="No subjects available" value="" enabled={false} />
                 )}
                 {subjects.map((subject) => (
                   <Picker.Item
@@ -123,36 +113,27 @@ const Qrcode = () => {
               onPress={() => setShowQr(false)}
               style={[styles.button, styles.buttonStop]}
             >
-              <Text className="text-surface font-semibold text-lg">
-                Stop QR
-              </Text>
+              <Text className="text-surface font-semibold text-lg">Stop QR</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
               onPress={() => setShowQr(true)}
               disabled={!selectedSubject}
-              style={[
-                styles.button,
-                !selectedSubject && styles.buttonDisabled,
-              ]}
+              style={[styles.button, !selectedSubject && styles.buttonDisabled]}
             >
-              <Text className="text-surface font-semibold text-lg">
-                Show QR
-              </Text>
+              <Text className="text-surface font-semibold text-lg">Show QR</Text>
             </TouchableOpacity>
           )}
         </View>
 
         <View style={styles.card}>
-          <Text className="text-xl font-semibold text-muted mb-3">
-            Active QR
-          </Text>
+          <Text className="text-xl font-semibold text-muted mb-3">Active QR</Text>
           <View style={styles.qrFrame}>
             {showQr && qrToken ? (
               <QRCode value={qrToken} size={170} color={colors.text} />
             ) : (
               <Text className="text-muted">
-                {selectedSubject ? "Tap Show QR" : "Select a subject"}
+                {selectedSubject ? 'Tap Show QR' : 'Select a subject'}
               </Text>
             )}
           </View>
@@ -160,31 +141,26 @@ const Qrcode = () => {
           <View className="flex-row justify-between">
             <Text className="text-muted">Teacher</Text>
             <Text className="text-muted">
-              {teacher.firstName} {teacher.lastName}
+              {teacherDetails.firstName} {teacherDetails.lastName}
             </Text>
           </View>
           <View className="flex-row justify-between mt-2">
             <Text className="text-muted">Teacher ID</Text>
-            <Text className="text-muted">{teacher.teacherId}</Text>
+            <Text className="text-muted">{teacherDetails.teacherId}</Text>
           </View>
           <View className="flex-row justify-between mt-2">
             <Text className="text-muted">Subject</Text>
-            <Text className="text-muted">
-              {selectedSubject ? selectedSubject.name : "-"}
-            </Text>
+            <Text className="text-muted">{selectedSubject ? selectedSubject.name : '-'}</Text>
           </View>
         </View>
-        {Platform.OS === "ios" && (
+        {Platform.OS === 'ios' && (
           <Modal
             visible={pickerOpen}
             transparent
             animationType="slide"
             onRequestClose={closeSubjectPicker}
           >
-            <Pressable
-              style={styles.modalBackdrop}
-              onPress={closeSubjectPicker}
-            >
+            <Pressable style={styles.modalBackdrop} onPress={closeSubjectPicker}>
               <Pressable style={styles.modalSheet} onPress={() => {}}>
                 <View style={styles.modalHeader}>
                   <Pressable onPress={closeSubjectPicker}>
@@ -212,13 +188,13 @@ const Qrcode = () => {
             </Pressable>
           </Modal>
         )}
-        <View style={{height: 50}} />
+        <View style={{ height: 50 }} />
       </ScrollView>
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default Qrcode;
+export default Qrcode
 
 const styles = StyleSheet.create({
   content: {
@@ -242,9 +218,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     paddingHorizontal: 14,
     height: 48,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   dropdownDisabled: {
     opacity: 0.6,
@@ -255,9 +231,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.background,
-    overflow: "hidden",
+    overflow: 'hidden',
     height: 56,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   picker: {
     height: 56,
@@ -270,7 +246,7 @@ const styles = StyleSheet.create({
   modalBackdrop: {
     flex: 1,
     backgroundColor: withOpacity(colors.text, 0.35),
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   modalSheet: {
     backgroundColor: colors.surface,
@@ -283,16 +259,16 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   button: {
     backgroundColor: colors.primary,
     height: 44,
     borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonStop: {
     backgroundColor: colors.danger,
@@ -304,10 +280,10 @@ const styles = StyleSheet.create({
     height: 220,
     borderRadius: 18,
     borderWidth: 2,
-    borderStyle: "dashed",
+    borderStyle: 'dashed',
     borderColor: withOpacity(colors.primary, 0.4),
     backgroundColor: withOpacity(colors.primary, 0.06),
-    alignItems: "center",
-    justifyContent: "center",
-  }
-});
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+})

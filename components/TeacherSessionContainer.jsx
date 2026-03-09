@@ -4,7 +4,7 @@ import { colors, withOpacity } from '../constants/colors'
 import { ChevronRight } from 'lucide-react-native'
 import { router } from 'expo-router'
 
-const TeacherSubjectContainer = ({ subjectId, subjectName, sessionDate, present, absent }) => {
+const TeacherSessionContainer = ({ sessionId, subjectName, sessionDate, present, absent }) => {
   const total = present + absent
   const presentPercent = total > 0 ? (present / total) * 100 : 0
   const absentPercent = total > 0 ? (absent / total) * 100 : 0
@@ -13,7 +13,7 @@ const TeacherSubjectContainer = ({ subjectId, subjectName, sessionDate, present,
     <TouchableOpacity
       style={styles.card}
       onPress={() => {
-        router.push(`/TeacherDetails/${subjectId}`)
+        router.push(`/TeacherDetails/${sessionId}`)
       }}
     >
       <View style={styles.topRow}>
@@ -44,7 +44,7 @@ const TeacherSubjectContainer = ({ subjectId, subjectName, sessionDate, present,
     </TouchableOpacity>
   )
 }
-export default TeacherSubjectContainer
+export default TeacherSessionContainer
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,

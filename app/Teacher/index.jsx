@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { teacher, teacherInfoPanelData, teacherSubjectData } from '../../mocks/mockdata'
+import { teacherDetails, teacherInfoPanelData, teacherSessionHistory } from '../../mocks/mockdata'
 import TeacherInfoPanelContainer from '../../components/TeacherInfoPanelContainer'
-import TeacherSubjectContainer from '../../components/TeacherSubjectContainer'
+import TeacherSessionContainer from '../../components/TeacherSessionContainer'
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { colors } from '../../constants/colors'
 import { useRouter } from 'expo-router'
@@ -20,7 +20,7 @@ const Index = () => {
       >
         <Text className="mx-8 mt-10 text-4xl font-bold">Welcome,</Text>
         <Text className="mx-8 mb-3 text-4xl font-bold">
-          {teacher.title} {teacher.firstName} {teacher.lastName}
+          {teacherDetails.title} {teacherDetails.firstName} {teacherDetails.lastName}
         </Text>
         <View className="flex-row flex-wrap px-6 mt-4">
           <View className="w-1/3 p-2">
@@ -65,10 +65,10 @@ const Index = () => {
         <View className="px-6 mt-6">
           <Text style={styles.sectionTitle}>Recent Sessions</Text>
           <View style={styles.sectionList}>
-            {teacherSubjectData.map((session) => (
-              <TeacherSubjectContainer
+            {teacherSessionHistory.map((session) => (
+              <TeacherSessionContainer
                 key={session.subjectId}
-                subjectId={session.subjectId}
+                sessionId={session.sessionId}
                 subjectName={session.subjectName}
                 sessionDate={session.sessionDate}
                 present={session.present}

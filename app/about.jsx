@@ -1,41 +1,38 @@
-import {ScrollView, Text, View, StyleSheet} from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {colors} from "../constants/colors";
+import { ScrollView, Text, View, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { colors } from '../constants/colors'
 
 export default function About() {
   return (
-    <View className="flex-1">
-      <ScrollView
-        className="flex-1 min-w-full"
-        showsVerticalScrollIndicator={false}
-      >
+    <SafeAreaView className="flex-1">
+      <ScrollView className="flex-1 min-w-full" showsVerticalScrollIndicator={false}>
+        <View style={{ minHeight: 40 }}></View>
         <Text className="mx-8 mb-3 mt-10 text-4xl font-bold">About App</Text>
         <Text className="mx-8 text-xl text-muted">
-          QR Attendance helps students and faculty track class attendance
-          quickly and accurately.
+          QR Attendance helps students and faculty track class attendance quickly and accurately.
         </Text>
 
         <View style={styles.card}>
           <Text className="text-2xl font-semibold mb-2">What It Does</Text>
           <Text className="text-muted text-base leading-6">
-            Scan QR codes to mark attendance, view overall progress, and check
-            subject-wise breakdowns in one place.
+            Scan QR codes to mark attendance, view overall progress, and check subject-wise
+            breakdowns in one place.
           </Text>
         </View>
 
         <View style={styles.card}>
           <Text className="text-2xl font-semibold mb-2">Key Features</Text>
           <Text className="text-muted text-base leading-6">
-            Fast check-in, clean dashboards, and subject summaries that help you
-            stay on top of your semester.
+            Fast check-in, clean dashboards, and subject summaries that help you stay on top of your
+            semester.
           </Text>
         </View>
 
         <View style={styles.card}>
           <Text className="text-2xl font-semibold mb-2">Data & Privacy</Text>
           <Text className="text-muted text-base leading-6">
-            Attendance data is stored securely within the app and is only used
-            for your academic tracking.
+            Attendance data is stored securely within the app and is only used for your academic
+            tracking.
           </Text>
         </View>
 
@@ -51,10 +48,10 @@ export default function About() {
           <Text className="text-muted text-base leading-6">1.0.0</Text>
         </View>
 
-        <View style={{height: 60}} />
+        <View style={{ height: 60 }} />
       </ScrollView>
-    </View>
-  );
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -68,4 +65,4 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     padding: 20,
   },
-});
+})

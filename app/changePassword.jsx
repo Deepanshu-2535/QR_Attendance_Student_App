@@ -1,16 +1,17 @@
-import {ScrollView, Text, TextInput, View, StyleSheet, TouchableOpacity} from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {LockKeyhole} from "lucide-react-native";
-import {colors} from "../constants/colors";
+import { ScrollView, Text, TextInput, View, StyleSheet, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { LockKeyhole } from 'lucide-react-native'
+import { colors } from '../constants/colors'
 
 export default function ChangePassword() {
   return (
-    <View className="flex-1">
+    <SafeAreaView className="flex-1" style={{ backgroundColor: 'transparent ' }}>
       <ScrollView
         className="flex-1 min-w-full"
-        contentContainerStyle={{flexGrow: 1}}
+        contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
+        <View style={{ minHeight: 40 }}></View>
         <Text className="mx-8 mb-3 mt-10 text-4xl font-bold">Change Password</Text>
         <Text className="mx-8 text-xl text-muted">
           Update your account password to keep your profile secure.
@@ -53,10 +54,10 @@ export default function ChangePassword() {
         <TouchableOpacity style={styles.button}>
           <Text className="text-surface font-semibold text-xl">Update Password</Text>
         </TouchableOpacity>
-        <View style={{height: 200}} />
+        <View style={{ height: 200 }} />
       </ScrollView>
-    </View>
-  );
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     height: 50,
     borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-});
+})
