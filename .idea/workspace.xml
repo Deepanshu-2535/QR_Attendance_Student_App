@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="609fe5d5-9a93-47f3-99f6-09359c662f6b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/StudentApp.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.prettierrc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/extensions.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Student/_layout.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Student/index.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Student/profile.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Student/scan.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/StudentDetails/[id].jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Teacher/_layout.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Teacher/index.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Teacher/profile.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Teacher/qrcode.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/TeacherDetails/[id].jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/_layout.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/about.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/changePassword.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/global.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/index.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/home.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/babel.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/CircularFillBar.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/DetailsPageContainer.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Divider.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/HorizontalFillBar.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/StudentSubjectContainer.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/TeacherInfoPanelContainer.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/TeacherSessionContainer.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/constants/colors.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/eslint.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/metro.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mocks/mockdata.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/nativewind-env.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/dateFormat.js" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Deepanshu-2535"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Deepanshu-2535/QR_Attendance_Student_App.git",
+    "accountId": "3a2a59bb-7060-4673-96a7-914eb65bc7f9"
+  }
+}]]></component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="3Ax1WYA6un5QJDeTv7rStymzvsZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "restructure/monorepo",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-WS-253.31033.133" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="609fe5d5-9a93-47f3-99f6-09359c662f6b" name="Changes" comment="" />
+      <created>1773519441078</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1773519441078</updated>
+      <workItem from="1773519444195" duration="32000" />
+    </task>
+    <servers />
+  </component>
+</project>
