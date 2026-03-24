@@ -55,7 +55,7 @@ attendance-app/
 
 ### Teacher
 - Generate QR code per class session
-- Auto rotating QR every 30 seconds (anti-cheat)
+- Auto rotating QR every 10 seconds (anti-cheat)
 - View session history and per session attendance details
 
 ### Admin
@@ -66,7 +66,7 @@ attendance-app/
 ---
 
 ## Anti-Cheat Mechanism
-- QR token rotates every 30 seconds — screenshots are useless almost instantly
+- QR token rotates every 10 seconds — screenshots are useless almost instantly
 - Each token is validated server side
 - One scan per student per session
 - Sessions have a defined time window
