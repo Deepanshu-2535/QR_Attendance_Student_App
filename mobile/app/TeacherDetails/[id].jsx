@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { colors } from '../../constants/colors'
 import { sessionDetailedAttendanceArray } from '../../mocks/mockdata'
@@ -7,16 +7,62 @@ import CircularFillBar from '../../components/CircularFillBar'
 import Divider from '../../components/Divider'
 import DetailsPageContainer from '../../components/DetailsPageContainer'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import api from '../../util/apiClient'
+import { ENDPOINTS } from '../../constants/api'
+import Loading from '../../components/Loading'
+import Toast from 'react-native-toast-message'
 
 const DetailsPage = () => {
   const { id } = useLocalSearchParams()
-  const sessionDetailedAttendance = sessionDetailedAttendanceArray.find(
-    (session) => session.sessionId === id,
-  )
+  const [sessionDetailedAttendance, setSessionDetailedAttendance] = useState({
+      subjectCode: '',
+      subjectName: '',
+      sessionDate: '',
+      totalNoOfStudents: 0,
+      noOfStudentsPresent: 0,
+      attendances: []
+    })
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=>{
+    async function loadSessionDetailedAttendance(){
+      if(!id){
+        setLoading(false);
+        return;
+      }
+      try{
+        const data = await api.get(ENDPOINTS.TEACHER.SESSIONS.DETAILS(id));
+        setSessionDetailedAttendance(data)
+      }
+      catch (error){
+        Toast.show({type:"error", text1:"Cannot load details",text2:error.message});
+        console.error(error)
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+    loadSessionDetailedAttendance();
+  },[])
+
   const percentage =
-    (sessionDetailedAttendance.present /
-      (sessionDetailedAttendance.present + sessionDetailedAttendance.absent)) *
+    (sessionDetailedAttendance.noOfStudentsPresent /
+      sessionDetailedAttendance.totalNoOfStudents) *
     100
+
+  if(loading){
+    return <SafeAreaView className="flex-1">
+      <Stack.Screen
+        options={{
+          title: '',
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: 'transparent', elevation: 0 },
+          headerTransparent: true
+        }}
+      />
+      <Loading visible={loading} />
+    </SafeAreaView>
+  }
   return (
     <SafeAreaView className="flex-1">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -25,7 +71,7 @@ const DetailsPage = () => {
             title: '',
             headerShadowVisible: false,
             headerStyle: { backgroundColor: 'transparent', elevation: 0 },
-            headerTransparent: true,
+            headerTransparent: true
           }}
         />
         <View style={{ minHeight: 40 }}></View>
@@ -49,29 +95,29 @@ const DetailsPage = () => {
             <View className="flex-row items-center justify-between flex-1">
               <Text className="text-lg font-semibold">Present</Text>
               <Text className="text-success font-semibold text-lg">
-                {sessionDetailedAttendance.present}
+                {sessionDetailedAttendance.noOfStudentsPresent}
               </Text>
             </View>
             <Divider orientation="vertical" margin={10} />
             <View className="flex-1 flex-row items-center justify-between">
               <Text className="text-lg font-semibold">Absent</Text>
               <Text className="text-danger font-semibold text-lg">
-                {sessionDetailedAttendance.absent}
+                {sessionDetailedAttendance.totalNoOfStudents - sessionDetailedAttendance.noOfStudentsPresent}
               </Text>
             </View>
           </View>
         </View>
         <Text className="text-muted text-xl mx-8 font-semibold">Attendance</Text>
         <View style={[styles.container, { marginTop: 10 }]}>
-          {sessionDetailedAttendance.attendanceDetails.map((attendance, index) => (
+          {sessionDetailedAttendance.attendances.map((attendance, index) => (
             <DetailsPageContainer
               key={attendance.rollNo}
               leftSideDetails={
-                attendance.rollNo + '.\t' + attendance.firstName + ' ' + attendance.lastName
+                attendance.rollNo + '.\t' + attendance.studentName
               }
-              status={attendance.status}
+              status={attendance.attendanceStatus}
               index={index}
-              length={sessionDetailedAttendance.attendanceDetails.length}
+              length={sessionDetailedAttendance.attendances.length}
             />
           ))}
         </View>
@@ -90,8 +136,8 @@ const styles = StyleSheet.create({
     shadowColor: colors.muted,
     shadowRadius: 8,
     shadowOpacity: 0.2,
-    padding: 20,
-  },
+    padding: 20
+  }
 })
 
 export default DetailsPage

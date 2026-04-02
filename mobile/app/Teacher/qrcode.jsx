@@ -6,45 +6,91 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ChevronDown } from 'lucide-react-native'
 import QRCode from 'react-native-qrcode-svg'
 import { Picker } from '@react-native-picker/picker'
-import { teacherDetails, teacherQrTokens, teacherSubjects } from '../../mocks/mockdata'
 import { colors, withOpacity } from '../../constants/colors'
 import Divider from '../../components/Divider'
+import api from '../../util/apiClient'
+import { ENDPOINTS } from '../../constants/api'
+import Loading from '../../components/Loading'
+import Toast from 'react-native-toast-message'
 
 const Qrcode = () => {
-  const subjects = useMemo(
-    () =>
-      teacherSubjects.map((subject) => ({
-        id: subject.subjectId,
-        name: subject.subjectName,
-      })),
-    [],
-  )
-
-  const [selectedId, setSelectedId] = useState(subjects[0]?.id ?? '')
+  const [subjects, setSubjects] = useState([])
+  const [subjectsLoading, setSubjectsLoading] = useState(true)
+  const [subjectsError, setSubjectsError] = useState('')
+  const [selectedId, setSelectedId] = useState('')
   const [showQr, setShowQr] = useState(false)
+  const [sessionId, setSessionId] = useState('')
+  const [token, setToken] = useState('')
+  const [tokenLoading, setTokenLoading] = useState(false)
+  const [actionLoading, setActionLoading] = useState(false)
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [tempSelectedId, setTempSelectedId] = useState(subjects[0]?.id ?? '')
+  const [tempSelectedId, setTempSelectedId] = useState('')
+  const tokenTimerRef = useRef(null)
+  const [teacherDetails, setTeacherDetails] = useState({
+    firstName: '',
+    lastName: '',
+    teacherId: ''
+  })
+  const [teacherId, setTeacherId] = useState('')
   const selectedSubject = useMemo(
-    () => subjects.find((subject) => subject.id === selectedId),
-    [subjects, selectedId],
+    () => subjects.find((subject) => subject.subjectCode === selectedId),
+    [subjects, selectedId]
   )
 
-  const qrToken = useMemo(() => {
-    if (!selectedSubject) return ''
-    const tokenEntry = teacherQrTokens.find((entry) => entry.subjectId === selectedSubject.id)
-    return tokenEntry?.qrJwt ?? ''
-  }, [selectedSubject])
+  useEffect(() => {
+    async function loadSubjects() {
+      setSubjectsLoading(true)
+      setSubjectsError('')
+      try {
+        const data = await api.get(ENDPOINTS.TEACHER.SUBJECTS)
+        setSubjects(data)
+        setSelectedId(data[0]?.subjectCode || '')
+        setTempSelectedId(data[0]?.subjectCode || '')
+      } catch (error) {
+        setSubjectsError(error.message || 'Failed to load subjects')
+        Toast.show({type:'error',text1:'Cannot load subjects',text2:error.message});
+      } finally {
+        setSubjectsLoading(false)
+      }
+    }
+
+    async function loadTeacherProfile() {
+      try {
+        const data = await api.get(ENDPOINTS.TEACHER.PROFILE)
+        if (data) {
+          const resolvedTeacherId = data.teacherId
+          setTeacherDetails({
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            teacherId: resolvedTeacherId
+          })
+          setTeacherId(resolvedTeacherId)
+        }
+      } catch (error) {
+        Toast.show({type:'error',text1:'Cannot load Teacher',text2:error.message});
+      }
+    }
+
+    loadSubjects()
+    loadTeacherProfile()
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (tokenTimerRef.current) clearInterval(tokenTimerRef.current)
+    }
+  }, [])
 
   const openSubjectPicker = () => {
     if (subjects.length === 0) return
-    setTempSelectedId(selectedId || subjects[0]?.id || '')
+    setTempSelectedId(selectedId || subjects[0]?.subjectCode || '')
     setPickerOpen(true)
   }
 
@@ -53,9 +99,74 @@ const Qrcode = () => {
   }
 
   const confirmSubjectPicker = () => {
-    setSelectedId(tempSelectedId)
-    setShowQr(false)
+    if (sessionId) stopSession()
+    const nextSelectedId = tempSelectedId || selectedId || subjects[0]?.subjectCode || ''
+    setSelectedId(nextSelectedId)
     setPickerOpen(false)
+  }
+
+  const fetchToken = async (id) => {
+    setTokenLoading(true)
+    try {
+      const data = await api.get(ENDPOINTS.TEACHER.SESSIONS.TOKEN(id))
+      setToken(data.token)
+    } catch (error) {
+      Toast.show({type:"error", text1:"Cannot fetch token",text2:error.message});
+      setToken('')
+    } finally {
+      setTokenLoading(false)
+    }
+  }
+
+  const startSession = async () => {
+    if (!selectedId || actionLoading) return
+    setActionLoading(true)
+    try {
+      if (!teacherId) {
+        setShowQr(false)
+        return
+      }
+      const data = await api.post(ENDPOINTS.TEACHER.SESSIONS.START, {
+        teacherId,
+        subjectCode: selectedId
+      })
+      const id = data.sessionId;
+      if (!id) {
+        setShowQr(false)
+        return
+      }
+      setSessionId(id)
+      setShowQr(true)
+      await fetchToken(id)
+      if (tokenTimerRef.current) clearInterval(tokenTimerRef.current)
+      tokenTimerRef.current = setInterval(() => fetchToken(id), 10000)
+    } catch (error) {
+      Toast.show({type:'error', text1:'Cannot Start Session',text2:error.message});
+      setShowQr(false)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const stopSession = async () => {
+    if (!sessionId || actionLoading) return
+    setActionLoading(true)
+    try {
+      await api.patch(ENDPOINTS.TEACHER.SESSIONS.STOP(sessionId))
+    } catch (error) {
+    } finally {
+      if (tokenTimerRef.current) clearInterval(tokenTimerRef.current)
+      tokenTimerRef.current = null
+      setToken('')
+      setSessionId('')
+      setShowQr(false)
+      setActionLoading(false)
+    }
+  }
+
+  const handleSubjectChange = (value) => {
+    if (sessionId) stopSession()
+    setSelectedId(value)
   }
 
   return (
@@ -68,6 +179,14 @@ const Qrcode = () => {
 
         <View style={styles.card}>
           <Text className="text-xl font-semibold text-muted">Subject</Text>
+          {subjectsLoading ? (
+            <View style={styles.loadingRow}>
+              <Loading fullScreen={false} showMessage={false} size="small" />
+              <Text className="text-muted ml-3">Loading subjects...</Text>
+            </View>
+          ) : subjectsError ? (
+            <Text className="text-danger mt-2">{subjectsError}</Text>
+          ) : null}
           {Platform.OS === 'ios' ? (
             <Pressable
               onPress={openSubjectPicker}
@@ -76,7 +195,7 @@ const Qrcode = () => {
             >
               <Text className="text-muted text-base">
                 {selectedSubject
-                  ? `${selectedSubject.name} (${selectedSubject.id})`
+                  ? `${selectedSubject.subjectName} (${selectedSubject.subjectCode})`
                   : 'Select subject'}
               </Text>
               <ChevronDown size={18} color={colors.muted} />
@@ -86,8 +205,7 @@ const Qrcode = () => {
               <Picker
                 selectedValue={selectedId}
                 onValueChange={(value) => {
-                  setSelectedId(value)
-                  setShowQr(false)
+                  handleSubjectChange(value)
                 }}
                 style={styles.picker}
                 dropdownIconColor={colors.muted}
@@ -97,9 +215,9 @@ const Qrcode = () => {
                 )}
                 {subjects.map((subject) => (
                   <Picker.Item
-                    key={subject.id}
-                    label={`${subject.name} (${subject.id})`}
-                    value={subject.id}
+                    key={subject.subjectCode}
+                    label={`${subject.subjectName} (${subject.subjectCode})`}
+                    value={subject.subjectCode}
                   />
                 ))}
               </Picker>
@@ -110,18 +228,23 @@ const Qrcode = () => {
 
           {showQr ? (
             <TouchableOpacity
-              onPress={() => setShowQr(false)}
+              onPress={stopSession}
               style={[styles.button, styles.buttonStop]}
+              disabled={actionLoading}
             >
-              <Text className="text-surface font-semibold text-lg">Stop QR</Text>
+              <Text className="text-surface font-semibold text-lg">
+                {actionLoading ? 'Stopping...' : 'Stop QR'}
+              </Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              onPress={() => setShowQr(true)}
-              disabled={!selectedSubject}
+              onPress={startSession}
+              disabled={!selectedSubject || subjectsLoading}
               style={[styles.button, !selectedSubject && styles.buttonDisabled]}
             >
-              <Text className="text-surface font-semibold text-lg">Show QR</Text>
+              <Text className="text-surface font-semibold text-lg">
+                {actionLoading ? 'Starting...' : 'Show QR'}
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -129,8 +252,10 @@ const Qrcode = () => {
         <View style={styles.card}>
           <Text className="text-xl font-semibold text-muted mb-3">Active QR</Text>
           <View style={styles.qrFrame}>
-            {showQr && qrToken ? (
-              <QRCode value={qrToken} size={170} color={colors.text} />
+            {showQr && token ? (
+              <QRCode value={token} size={170} color={colors.text} />
+            ) : tokenLoading ? (
+              <Loading fullScreen={false} showMessage={false} size="small" />
             ) : (
               <Text className="text-muted">
                 {selectedSubject ? 'Tap Show QR' : 'Select a subject'}
@@ -141,16 +266,18 @@ const Qrcode = () => {
           <View className="flex-row justify-between">
             <Text className="text-muted">Teacher</Text>
             <Text className="text-muted">
-              {teacherDetails.firstName} {teacherDetails.lastName}
+              {teacherDetails.firstName || teacherDetails.lastName
+                ? `${teacherDetails.firstName} ${teacherDetails.lastName}`.trim()
+                : '-'}
             </Text>
           </View>
           <View className="flex-row justify-between mt-2">
             <Text className="text-muted">Teacher ID</Text>
-            <Text className="text-muted">{teacherDetails.teacherId}</Text>
+            <Text className="text-muted">{teacherDetails.teacherId || '-'}</Text>
           </View>
           <View className="flex-row justify-between mt-2">
             <Text className="text-muted">Subject</Text>
-            <Text className="text-muted">{selectedSubject ? selectedSubject.name : '-'}</Text>
+            <Text className="text-muted">{selectedSubject ? selectedSubject.subjectName : '-'}</Text>
           </View>
         </View>
         {Platform.OS === 'ios' && (
@@ -161,7 +288,8 @@ const Qrcode = () => {
             onRequestClose={closeSubjectPicker}
           >
             <Pressable style={styles.modalBackdrop} onPress={closeSubjectPicker}>
-              <Pressable style={styles.modalSheet} onPress={() => {}}>
+              <Pressable style={styles.modalSheet} onPress={() => {
+              }}>
                 <View style={styles.modalHeader}>
                   <Pressable onPress={closeSubjectPicker}>
                     <Text className="text-muted">Cancel</Text>
@@ -178,9 +306,9 @@ const Qrcode = () => {
                 >
                   {subjects.map((subject) => (
                     <Picker.Item
-                      key={subject.id}
-                      label={`${subject.name} (${subject.id})`}
-                      value={subject.id}
+                      key={subject.subjectCode}
+                      label={`${subject.subjectName} (${subject.subjectCode})`}
+                      value={subject.subjectCode}
                     />
                   ))}
                 </Picker>
@@ -198,7 +326,7 @@ export default Qrcode
 
 const styles = StyleSheet.create({
   content: {
-    paddingBottom: 24,
+    paddingBottom: 24
   },
   card: {
     backgroundColor: colors.surface,
@@ -208,7 +336,7 @@ const styles = StyleSheet.create({
     shadowColor: colors.muted,
     shadowRadius: 8,
     shadowOpacity: 0.2,
-    padding: 20,
+    padding: 20
   },
   dropdown: {
     marginTop: 12,
@@ -220,10 +348,10 @@ const styles = StyleSheet.create({
     height: 48,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   dropdownDisabled: {
-    opacity: 0.6,
+    opacity: 0.6
   },
   pickerWrapper: {
     marginTop: 12,
@@ -233,26 +361,26 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     overflow: 'hidden',
     height: 56,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   picker: {
     height: 56,
     paddingVertical: 6,
-    color: colors.text,
+    color: colors.text
   },
   pickerItem: {
-    color: colors.text,
+    color: colors.text
   },
   modalBackdrop: {
     flex: 1,
     backgroundColor: withOpacity(colors.text, 0.35),
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-end'
   },
   modalSheet: {
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingBottom: 12,
+    paddingBottom: 12
   },
   modalHeader: {
     paddingHorizontal: 16,
@@ -261,20 +389,25 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   button: {
     backgroundColor: colors.primary,
     height: 44,
     borderRadius: 14,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   buttonStop: {
-    backgroundColor: colors.danger,
+    backgroundColor: colors.danger
   },
   buttonDisabled: {
-    opacity: 0.5,
+    opacity: 0.5
+  },
+  loadingRow: {
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   qrFrame: {
     height: 220,
@@ -284,6 +417,6 @@ const styles = StyleSheet.create({
     borderColor: withOpacity(colors.primary, 0.4),
     backgroundColor: withOpacity(colors.primary, 0.06),
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 })

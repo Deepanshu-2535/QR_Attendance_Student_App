@@ -1,19 +1,45 @@
 import { ScrollView, Text, View, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { studentDetails, studentSubjectWiseAttendance } from '../../mocks/mockdata.js'
 import HorizontalFillBar from '../../components/HorizontalFillBar'
 import { History } from 'lucide-react-native'
 import StudentSubjectContainer from '../../components/StudentSubjectContainer'
 import Divider from '../../components/Divider'
 import { colors } from '../../constants/colors'
+import { useEffect, useState } from 'react'
+import api from '../../util/apiClient'
+import { ENDPOINTS } from '../../constants/api'
+import Loading from '../../components/Loading'
+import Toast from 'react-native-toast-message'
 export default function Index() {
-  let overAllTotalClasses = 0
-  let overAllTotalAttended = 0
-  studentSubjectWiseAttendance.map((subject) => {
-    overAllTotalClasses += subject.totalClasses
-    overAllTotalAttended += subject.attended
-  })
-  let overAllTotalAttendance = Math.round((overAllTotalAttended / overAllTotalClasses) * 100)
+  const [studentDetails, setStudentDetails] = useState({
+    firstName: '',
+    rollNo: '',
+    semester: '',
+    totalClasses: 0,
+    attended: 0,
+    subjectWiseAttendance: []
+  });
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    async function loadStudentDetails() {
+      try{
+      const data = await api.get(ENDPOINTS.STUDENT.OVERVIEW)
+      setStudentDetails(data);
+      }
+      catch (error) {
+        Toast.show({type:"error", text1:"Cannot load Student details",text2:error.message});
+        console.error(error);
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+    loadStudentDetails();
+  },[])
+
+  let overAllTotalAttendance = studentDetails.totalClasses
+    ? Math.round((studentDetails.attended / studentDetails.totalClasses) * 100)
+    : 0
   let fillColor = ''
   if (overAllTotalAttendance > 75) {
     fillColor = colors.success
@@ -21,6 +47,9 @@ export default function Index() {
     fillColor = colors.danger
   } else {
     fillColor = colors.primary
+  }
+  if(loading) {
+    return <Loading />
   }
   return (
     <SafeAreaView className="flex-1">
@@ -54,20 +83,20 @@ export default function Index() {
           <View className="flex flex-row mt-5 justify-between gap-x-3">
             <View className="flex-1 flex-row justify-between">
               <Text className="text-xl">Total Classes</Text>
-              <Text className="text-xl font-semibold justify-end">{overAllTotalClasses}</Text>
+              <Text className="text-xl font-semibold justify-end">{studentDetails.totalClasses}</Text>
             </View>
             <Divider orientation="vertical" margin={2} />
             <View className="flex-1 flex-row justify-between">
               <Text className="text-xl">Attended</Text>
-              <Text className="text-xl font-semibold">{overAllTotalAttended}</Text>
+              <Text className="text-xl font-semibold">{studentDetails.attended}</Text>
             </View>
           </View>
         </View>
         <Text className="text-xl font-semibold text-muted mx-8">Subjects</Text>
-        {studentSubjectWiseAttendance.map((subject, index) => (
+        {studentDetails.subjectWiseAttendance.map((subject, index) => (
           <StudentSubjectContainer
-            key={subject.subjectId}
-            subjectId={subject.subjectId}
+            key={subject.subjectCode}
+            subjectCode={subject.subjectCode}
             subjectName={subject.subjectName}
             totalClasses={subject.totalClasses}
             attended={subject.attended}

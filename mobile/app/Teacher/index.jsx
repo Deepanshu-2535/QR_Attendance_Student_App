@@ -1,16 +1,54 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { teacherDetails, teacherInfoPanelData, teacherSessionHistory } from '../../mocks/mockdata'
 import TeacherInfoPanelContainer from '../../components/TeacherInfoPanelContainer'
 import TeacherSessionContainer from '../../components/TeacherSessionContainer'
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { colors } from '../../constants/colors'
-import { useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 import { QrCode } from 'lucide-react-native'
+import api from '../../util/apiClient'
+import { ENDPOINTS } from '../../constants/api'
+import Loading from '../../components/Loading'
+import Toast from 'react-native-toast-message'
 
 const Index = () => {
   const router = useRouter()
+  const [teacherDetails, setTeacherDetails] = useState({
+    title : '',
+    firstName: '',
+    lastName: '',
+    noOfSubjects:0,
+    totalStudents:0,
+    averageAttendancePercentage: 0,
+    sessionHistory: []
+  })
+  const [loading, setLoading] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      async function loadTeacherDetails() {
+        try{
+          const data = await api.get(ENDPOINTS.TEACHER.DASHBOARD);
+          setTeacherDetails(data);
+        }
+        catch(error){
+          Toast.show({type:'error',text1:"Cannot load Teacher Details",text2:error.message});
+          console.error(error)
+        }
+        finally {
+          setLoading(false);
+        }
+      }
+      loadTeacherDetails();
+    }, [])
+  )
+
+  if(loading){
+    return <Loading />
+  }
+
   return (
     <SafeAreaView className="flex-1">
       <ScrollView
@@ -32,21 +70,21 @@ const Index = () => {
                   color={colors.primary}
                 />
               }
-              value={teacherInfoPanelData.noOfSubjects}
+              value={teacherDetails.noOfSubjects}
               heading="Subjects"
             />
           </View>
           <View className="w-1/3 p-2">
             <TeacherInfoPanelContainer
               icon={<Ionicons name="people" size={24} color={colors.primary} />}
-              value={teacherInfoPanelData.totalStudents}
+              value={teacherDetails.totalStudents}
               heading="Total Students"
             />
           </View>
           <View className="w-1/3 p-2">
             <TeacherInfoPanelContainer
               icon={<FontAwesome name="check-circle" size={24} color={colors.primary} />}
-              value={teacherInfoPanelData.averageAttendance + '%'}
+              value={teacherDetails.averageAttendancePercentage + '%'}
               heading="Average Attendance"
             />
           </View>
@@ -65,18 +103,19 @@ const Index = () => {
         <View className="px-6 mt-6">
           <Text style={styles.sectionTitle}>Recent Sessions</Text>
           <View style={styles.sectionList}>
-            {teacherSessionHistory.map((session) => (
+            {teacherDetails.sessionHistory.map((session) => (
               <TeacherSessionContainer
-                key={session.subjectId}
+                key={session.sessionId}
                 sessionId={session.sessionId}
                 subjectName={session.subjectName}
                 sessionDate={session.sessionDate}
-                present={session.present}
-                absent={session.absent}
+                present={session.noOfStudentsPresent}
+                absent={session.totalNoOfStudents - session.noOfStudentsPresent}
               />
             ))}
           </View>
         </View>
+        <View style={{height:50}}/>
       </ScrollView>
     </SafeAreaView>
   )

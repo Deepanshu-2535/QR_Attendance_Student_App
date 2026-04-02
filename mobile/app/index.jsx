@@ -1,18 +1,45 @@
 import { ScrollView, Text, TextInput, View, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { colors, withOpacity } from '../constants/colors'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
+import api from '../util/apiClient'
+import { ENDPOINTS } from '../constants/api'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import Toast from 'react-native-toast-message'
 
 const Index = () => {
-  const [role, setRole] = useState('studentDetails')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
-  function handleLogin() {
-    if (role === 'studentDetails') {
-      router.replace('/Student')
-    } else if (role === 'teacherDetails') {
-      router.replace('/Teacher')
+
+  useEffect(()=>{
+
+  },[])
+
+  async function handleLogin() {
+    setLoading(true)
+    try {
+      const data = await api.post(ENDPOINTS.AUTH, {
+        email,
+        password
+      })
+      await AsyncStorage.setItem('authToken', data.token)
+      await AsyncStorage.setItem('userRole', data.role)
+      if (data.role === 'STUDENT') {
+        router.replace('/Student')
+      } else if (data.role === 'TEACHER') {
+        router.replace('/Teacher')
+      }
     }
+    catch(e){
+      Toast.show({type:'error',text1:"Error in logging in",text2:e.message});
+    }
+    finally {
+      setLoading(false)
+    }
+
   }
 
   return (
@@ -40,33 +67,17 @@ const Index = () => {
 
           <View style={styles.card}>
             <Text className="text-2xl font-semibold mb-1">Sign In</Text>
-            <Text className="text-muted mb-4">Choose your role and enter your credentials.</Text>
-            <View style={styles.roleSwitch}>
-              <TouchableOpacity
-                style={[styles.roleOption, role === 'studentDetails' && styles.roleOptionActive]}
-                onPress={() => setRole('studentDetails')}
-              >
-                <Text style={[styles.roleText, role === 'studentDetails' && styles.roleTextActive]}>
-                  Student
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.roleOption, role === 'teacherDetails' && styles.roleOptionActive]}
-                onPress={() => setRole('teacherDetails')}
-              >
-                <Text style={[styles.roleText, role === 'teacherDetails' && styles.roleTextActive]}>
-                  Teacher
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <Text className="text-muted font-semibold mt-6 mb-2">College Email</Text>
+            <Text className="text-muted mb-4">Enter your credentials.</Text>
+            <Text className="text-muted font-semibold mt-2 mb-2">College Email</Text>
             <TextInput
               placeholder="name@college.edu"
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
               className="bg-background rounded-xl px-4 py-3 text-base text-text"
+              style={styles.input}
+              value={email}
+              onChangeText={email => setEmail(email)}
             />
 
             <Text className="text-muted font-semibold mt-4 mb-2">Password</Text>
@@ -74,15 +85,10 @@ const Index = () => {
               placeholder="Enter your password"
               secureTextEntry
               className="bg-background rounded-xl px-4 py-3 text-base text-text"
+              style={styles.input}
+              value={password}
+              onChangeText={password => setPassword(password)}
             />
-
-            <Text className="text-muted mt-4">
-              You are signing in as{' '}
-              <Text className="font-semibold text-text">
-                {role === 'studentDetails' ? 'Student' : 'Teacher'}
-              </Text>
-              .
-            </Text>
           </View>
 
           <TouchableOpacity style={styles.button} onPress={handleLogin}>
@@ -104,7 +110,7 @@ export default Index
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
   pageAccentTop: {
     position: 'absolute',
@@ -113,7 +119,7 @@ const styles = StyleSheet.create({
     width: 320,
     height: 320,
     borderRadius: 160,
-    backgroundColor: withOpacity(colors.primary, 0.1),
+    backgroundColor: withOpacity(colors.primary, 0.1)
   },
   pageAccentBottom: {
     position: 'absolute',
@@ -122,7 +128,7 @@ const styles = StyleSheet.create({
     width: 360,
     height: 360,
     borderRadius: 180,
-    backgroundColor: withOpacity(colors.primary, 0.08),
+    backgroundColor: withOpacity(colors.primary, 0.08)
   },
   pageAccentSide: {
     position: 'absolute',
@@ -131,14 +137,14 @@ const styles = StyleSheet.create({
     width: 240,
     height: 240,
     borderRadius: 120,
-    backgroundColor: withOpacity(colors.primary, 0.06),
+    backgroundColor: withOpacity(colors.primary, 0.06)
   },
   appHeader: {
     marginHorizontal: 20,
     marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 10
   },
   appIconPlaceholder: {
     width: 44,
@@ -151,17 +157,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     shadowColor: colors.muted,
     shadowRadius: 10,
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.2
   },
   appIconText: {
     color: colors.primary,
     fontWeight: '700',
-    letterSpacing: 0.6,
+    letterSpacing: 0.6
   },
   appName: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text,
+    color: colors.text
   },
   card: {
     backgroundColor: colors.surface,
@@ -172,32 +178,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOpacity: 0.2,
     padding: 20,
-  },
-  roleSwitch: {
-    flexDirection: 'row',
-    backgroundColor: colors.background,
-    borderRadius: 16,
-    padding: 6,
-  },
-  roleOption: {
-    flex: 1,
-    borderRadius: 12,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  roleOptionActive: {
-    backgroundColor: colors.surface,
-    shadowColor: colors.muted,
-    shadowRadius: 6,
-    shadowOpacity: 0.15,
-  },
-  roleText: {
-    color: colors.muted,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  roleTextActive: {
-    color: colors.text,
+    paddingBottom: 40
   },
   button: {
     backgroundColor: colors.primary,
@@ -206,6 +187,12 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 16,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
+  input: {
+    fontSize: 16,
+    lineHeight: 20,
+    paddingVertical: 12,
+    textAlignVertical: 'center'
+  }
 })

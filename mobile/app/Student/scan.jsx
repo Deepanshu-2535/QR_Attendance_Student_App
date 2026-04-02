@@ -5,31 +5,42 @@ import {ScanQrCode} from "lucide-react-native";
 import React, {useRef, useState} from "react";
 import {useIsFocused} from "@react-navigation/native";
 import {colors, withOpacity} from "../../constants/colors";
+import api from '../../util/apiClient'
+import { ENDPOINTS } from '../../constants/api'
+import { useRouter } from 'expo-router'
+import Toast from 'react-native-toast-message'
+import AttendanceSuccessModal from '../../components/AttendanceSuccessModal'
 
 const Scan = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const isFocused = useIsFocused();
   const [scanned,setScanned] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const isProcessing = useRef(false);
-  function handleScanQrCode({type,data}) {
+  const router = useRouter();
+  async function handleScanQrCode({type,data}) {
     if (isProcessing.current) return;
     isProcessing.current = true;
     setScanned(true);
-    setTimeout(() => {
-      Alert.alert(
-          "QR Code Found!",
-          `Data: ${data}`,
-          [
-            {
-              text: "OK",
-              onPress: () => {
-                isProcessing.current = false;
-                setScanned(false);
-              }
-            }
-          ]
-      );
-    }, 500);
+    try {
+      const responseData = await api.post(ENDPOINTS.STUDENT.SCAN, {
+        token: `${data}`
+      })
+      setModalVisible(true);
+    } catch (error) {
+      Toast.show({ type: "error", text1: "Error marking attendance", text2: error.message });
+      setTimeout(() => {
+        isProcessing.current = false;
+        setScanned(false);
+      }, 2000)
+    }
+  }
+
+  const handleModalDismiss = () => {
+    setModalVisible(false);
+    router.replace("/Student");
+    isProcessing.current = false;
+    setScanned(false);
   }
 
   return (
@@ -86,6 +97,10 @@ const Scan = () => {
         </View>
 
         <View style={{height: 40}} />
+        <AttendanceSuccessModal
+          visible={modalVisible}
+          onDismiss={handleModalDismiss}
+        />
       </View>
     </SafeAreaView>
   );

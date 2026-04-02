@@ -5,7 +5,7 @@ import { ChevronRight } from 'lucide-react-native'
 import { useRouter } from 'expo-router'
 import { colors } from '../constants/colors'
 
-const StudentSubjectContainer = ({ subjectId, subjectName, totalClasses, attended }) => {
+const StudentSubjectContainer = ({ subjectCode, subjectName, totalClasses, attended }) => {
   const [totalAttendance, setTotalAttendance] = useState(
     Math.round((attended / totalClasses) * 100),
   )
@@ -21,7 +21,7 @@ const StudentSubjectContainer = ({ subjectId, subjectName, totalClasses, attende
 
   return (
     <TouchableOpacity
-      onPress={() => router.push(`/StudentDetails/${subjectId}`)}
+      onPress={() => router.push(`/StudentDetails/${subjectCode}`)}
       style={styles.container}
     >
       <View className="flex-row">

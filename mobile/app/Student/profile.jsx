@@ -1,16 +1,52 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { studentDetails } from '../../mocks/mockdata'
 import { ChevronRight, Info, LockKeyhole, UserRoundPen } from 'lucide-react-native'
 import { useNavigation, useRouter } from 'expo-router'
 import { colors } from '../../constants/colors'
 import Divider from '../../components/Divider'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import api from '../../util/apiClient'
+import { ENDPOINTS } from '../../constants/api'
+import Loading from '../../components/Loading'
+import Toast from 'react-native-toast-message'
 
 const Profile = () => {
   const router = useRouter()
-  const handleLogout = () => {
+  const [studentDetails, setStudentDetails] = useState({
+    firstName: '',
+    lastName: '',
+    semester: 0,
+    rollNo: 0,
+    department: ''
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadStudentDetails() {
+      try {
+        const data = await api.get(ENDPOINTS.STUDENT.PROFILE)
+        setStudentDetails(data)
+      }
+      catch (error) {
+        Toast.show({type:"error", text1:"Cannot load Profile",text2:error.message});
+        console.error(error);
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+    loadStudentDetails();
+  }, [])
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('authToken')
+    await AsyncStorage.removeItem('userRole')
     router.replace('/')
+  }
+
+  if(loading){
+    return <Loading />
   }
   return (
     <SafeAreaView>
@@ -92,6 +128,6 @@ const styles = StyleSheet.create({
     shadowColor: colors.muted,
     shadowRadius: 8,
     shadowOpacity: 0.2,
-    padding: 20,
-  },
+    padding: 20
+  }
 })
